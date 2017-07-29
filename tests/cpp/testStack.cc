@@ -1,81 +1,106 @@
 #include <gtest/gtest.h>
-#include <btstl/containers/Stack.hh>
+#include <btstl/containers/LinkedStack.hh>
 
-TEST( TestBtStack, add ) {
+TEST( TestBtLinkedStack, copy_constructor ) {
 
-    BtStack< int > stack;
-
-    int valueA = 1;
-    int valueB = 2;
-    int valueC = 3;
-
-    stack.add( &valueA );
-    stack.add( &valueB );
-    stack.add( &valueC );
-}
-
-TEST( TestBtStack, top ) {
-
-    BtStack< int > stack;
+    BtLinkedStack< int > stackA;
 
     int valueA = 1;
     int valueB = 2;
     int valueC = 3;
 
-    stack.add( &valueA );
-    stack.add( &valueB );
-    stack.add( &valueC );
+    stackA.add( valueA );
+    stackA.add( valueB );
+    stackA.add( valueC );
 
-    int resultC = *stack.top();
-    stack.pop();
+    // Copy
+    BtLinkedStack< int > stackB( stackA );
+    EXPECT_FALSE( stackB.empty() );
 
-    int resultB = *stack.top();
-    stack.pop();
-
-    int resultA = *stack.top();
-    stack.pop();
-
-    EXPECT_EQ( valueA, resultA );
-    EXPECT_EQ( valueB, resultB );
+    int resultC;
+    bool topStateC = stackB.top( resultC );
+    bool popStateC = stackB.pop();
     EXPECT_EQ( valueC, resultC );
+    EXPECT_TRUE( topStateC );
+    EXPECT_TRUE( popStateC );
+
+    int resultB;
+    bool topStateB = stackB.top( resultB );
+    bool popStateB = stackB.pop();
+    EXPECT_EQ( valueB, resultB );
+    EXPECT_TRUE( topStateB );
+    EXPECT_TRUE( popStateB );
+
+    int resultA;
+    bool topStateA = stackB.top( resultA );
+    bool popStateA = stackB.pop();
+    EXPECT_EQ( valueA, resultA );
+    EXPECT_TRUE( topStateA );
+    EXPECT_TRUE( popStateA );
 }
 
-TEST( TestBtStack, pop ) {
+TEST( TestBtLinkedStack, add ) {
 
-    BtStack< int > stack;
+    BtLinkedStack< int > stack;
 
     int valueA = 1;
     int valueB = 2;
     int valueC = 3;
 
-    stack.add( &valueA );
-    stack.add( &valueB );
-    stack.add( &valueC );
-
-    int resultC = *stack.top();
-    stack.pop();
-
-    int resultB = *stack.top();
-    stack.pop();
-
-    int resultA = *stack.top();
-    stack.pop();
-
-    EXPECT_EQ( valueA, resultA );
-    EXPECT_EQ( valueB, resultB );
-    EXPECT_EQ( valueC, resultC );
+    stack.add( valueA );
+    stack.add( valueB );
+    stack.add( valueC );
 }
 
-TEST( TestBtStack, clear ) {
+TEST( TestBtLinkedStack, top ) {
 
-    BtStack< int > stack;
+    BtLinkedStack< int > stack;
+
+    int badValueA;
+    bool topBadStateA = stack.top( badValueA );
+    EXPECT_FALSE( topBadStateA );
+
+    int valueA = 1;
+
+    stack.add( valueA );
+    int resultA;
+    bool topStateA = stack.top( resultA );
+    EXPECT_EQ( valueA, resultA );
+    EXPECT_TRUE( topStateA );
+
+    stack.pop();
+
+    int badValueB;
+    bool topBadStateB = stack.top( badValueB );
+    EXPECT_FALSE( topBadStateB );
+}
+
+TEST( TestBtLinkedStack, pop ) {
+
+    BtLinkedStack< int > stack;
+
+    bool popBadStateA = stack.pop();
+    EXPECT_FALSE( popBadStateA );
+
+    int valueA = 1;
+    stack.add( valueA );
+    bool popStateA = stack.pop();
+    EXPECT_TRUE( popStateA );
+
+    bool popBadStateB = stack.pop();
+    EXPECT_FALSE( popBadStateB );
+}
+
+TEST( TestBtLinkedStack, clear ) {
+
+    BtLinkedStack< int > stack;
     EXPECT_TRUE( stack.empty() );
 
     stack.clear();
     EXPECT_TRUE( stack.empty() );
 
     int valueA = 1;
-    stack.add( &valueA );
+    stack.add( valueA );
     stack.clear();
     EXPECT_TRUE( stack.empty() );
 
@@ -83,13 +108,13 @@ TEST( TestBtStack, clear ) {
     EXPECT_TRUE( stack.empty() );
 }
 
-TEST( TestBtStack, empty ) {
+TEST( TestBtLinkedStack, empty ) {
 
-    BtStack< int > stack;
+    BtLinkedStack< int > stack;
     EXPECT_TRUE( stack.empty() );
 
     int valueA = 1;
-    stack.add( &valueA );
+    stack.add( valueA );
     EXPECT_FALSE( stack.empty() );
 
     stack.pop();
