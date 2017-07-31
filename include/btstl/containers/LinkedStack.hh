@@ -35,7 +35,7 @@ public:
 private:
     std::size_t size() const;
     void shallow_copy( const BtLinkedStack& stack );
-    void swap( const BtLinkedStack& stack ) noexcept;
+    void swap( BtLinkedStack& stack ) noexcept;
 
 private:
     Link* m_top;
@@ -61,12 +61,12 @@ template< typename T >
 BtLinkedStack< T >::BtLinkedStack( const BtLinkedStack& copy )
     : m_top( nullptr ),
       m_size( 0 ) {
-    shallowCopy( copy );
+    shallow_copy( copy );
 }
 
 template< typename T >
 BtLinkedStack< T >& BtLinkedStack< T >::operator=( const BtLinkedStack< T >& copy ) {
-    shallowCopy( copy );
+    shallow_copy( copy );
     return *this;
 }
 
@@ -136,7 +136,7 @@ std::size_t BtLinkedStack< T >::size() const {
 }
 
 template< typename T >
-void BtLinkedStack< T >::shallowCopy( const BtLinkedStack& stack ) {
+void BtLinkedStack< T >::shallow_copy( const BtLinkedStack& stack ) {
 
     // Create temp array
     std::size_t size( stack.size() );
@@ -156,10 +156,15 @@ void BtLinkedStack< T >::shallowCopy( const BtLinkedStack& stack ) {
 }
 
 template< typename T >
-void BtLinkedStack< T >::swap( const BtLinkedStack& stack ) noexcept {
-    std::swap( m_top, stack.m_top );
-    std::swap( m_size, stack.m_size );
+void BtLinkedStack< T >::swap( BtLinkedStack& stack ) noexcept {
+    using std::swap;
+    swap( m_top, stack.m_top );
+    swap( m_size, stack.m_size );
 }
 
+template< typename T >
+void swap( BtLinkedStack< T >& lhs, BtLinkedStack< T >& rhs ) {
+    lhs.swap( rhs );
+}
 
 #endif // BTSTL_STACK_HH
