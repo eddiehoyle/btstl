@@ -9,8 +9,6 @@ template< typename T >
 class BtLinkedStack {
 
 private:
-
-    // Forward declare
     class Link;
 
 public:
@@ -36,6 +34,7 @@ private:
     std::size_t size() const;
     void shallow_copy( const BtLinkedStack& stack );
     void swap( BtLinkedStack& stack ) noexcept;
+    BtLinkedStack& move( BtLinkedStack& stack ) noexcept;
 
 private:
     Link* m_top;
@@ -71,16 +70,16 @@ BtLinkedStack< T >& BtLinkedStack< T >::operator=( const BtLinkedStack< T >& cop
 }
 
 template< typename T >
-BtLinkedStack< T >::BtLinkedStack( BtLinkedStack&& stack ) noexcept
-        : m_top( nullptr ),
-          m_size( 0 ) {
-    swap( stack );
+BtLinkedStack< T >::BtLinkedStack( BtLinkedStack&& rhs ) noexcept
+        : m_top( std::move( rhs.m_top ) ),
+          m_size( std::move( rhs.m_size ) ) {
+    rhs.m_top = nullptr;
+    rhs.clear();
 }
 
 template< typename T >
 BtLinkedStack< T >& BtLinkedStack< T >::operator=( BtLinkedStack< T >&& rhs ) noexcept {
-    swap( rhs );
-    return *this;
+    return move( rhs );
 }
 
 template< typename T >
@@ -156,10 +155,27 @@ void BtLinkedStack< T >::shallow_copy( const BtLinkedStack& stack ) {
 }
 
 template< typename T >
-void BtLinkedStack< T >::swap( BtLinkedStack& stack ) noexcept {
+void BtLinkedStack< T >::swap( BtLinkedStack& rhs ) noexcept {
     using std::swap;
-    swap( m_top, stack.m_top );
-    swap( m_size, stack.m_size );
+    swap( m_top, rhs.m_top );
+    swap( m_size, rhs.m_size );
+}
+
+template< typename T >
+BtLinkedStack< T >& BtLinkedStack< T >::move( BtLinkedStack< T >& rhs ) noexcept {
+
+    // Clear this stack
+    clear();
+
+    // Move contents
+    m_top = std::move( rhs.m_top );
+    m_size = std::move( rhs.m_size );
+
+    // Clean up moved stack;
+    rhs.m_top = nullptr;
+    rhs.clear();
+
+    return *this;
 }
 
 template< typename T >

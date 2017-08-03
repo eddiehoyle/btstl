@@ -1,5 +1,86 @@
 #include <gtest/gtest.h>
 #include <btstl/containers/LinkedStack.hh>
+#include <utility>
+
+TEST( TestBtLinkedStack, move_constructor ) {
+
+    BtLinkedStack< int > stackD;
+
+    int valueA = 1;
+    int valueB = 2;
+    int valueC = 3;
+
+    stackD.add( valueA );
+    stackD.add( valueB );
+    stackD.add( valueC );
+
+    BtLinkedStack< int > stackC( std::move( stackD ) );
+
+    int resultC;
+    bool topStateC = stackC.top( resultC );
+    bool popStateC = stackC.pop();
+    EXPECT_EQ( valueC, resultC );
+    EXPECT_TRUE( topStateC );
+    EXPECT_TRUE( popStateC );
+
+    BtLinkedStack< int > stackB( std::move( stackC ) );
+
+    int resultB;
+    bool topStateB = stackB.top( resultB );
+    bool popStateB = stackB.pop();
+    EXPECT_EQ( valueB, resultB );
+    EXPECT_TRUE( topStateB );
+    EXPECT_TRUE( popStateB );
+
+    BtLinkedStack< int > stackA( std::move( stackB ) );
+
+    int resultA;
+    bool topStateA = stackA.top( resultA );
+    bool popStateA = stackA.pop();
+    EXPECT_EQ( valueA, resultA );
+    EXPECT_TRUE( topStateA );
+    EXPECT_TRUE( popStateA );
+}
+
+TEST( TestBtLinkedStack, move_assignment ) {
+
+    BtLinkedStack< int > stackA, stackB, stackC;
+
+    int valueA = 1;
+    int valueB = 2;
+    int valueC = 3;
+
+    stackA.add( valueA );
+    stackA.add( valueB );
+    stackA.add( valueC );
+
+    stackC = std::move( stackA );
+
+    int resultC;
+    bool topStateC = stackC.top( resultC );
+    bool popStateC = stackC.pop();
+    EXPECT_EQ( valueC, resultC );
+    EXPECT_TRUE( topStateC );
+    EXPECT_TRUE( popStateC );
+
+    stackB = std::move( stackC );
+
+    int resultB;
+    bool topStateB = stackB.top( resultB );
+    bool popStateB = stackB.pop();
+    EXPECT_EQ( valueB, resultB );
+    EXPECT_TRUE( topStateB );
+    EXPECT_TRUE( popStateB );
+
+    stackA = std::move( stackB );
+
+    int resultA;
+    bool topStateA = stackA.top( resultA );
+    bool popStateA = stackA.pop();
+    EXPECT_EQ( valueA, resultA );
+    EXPECT_TRUE( topStateA );
+    EXPECT_TRUE( popStateA );
+}
 
 TEST( TestBtLinkedStack, copy_constructor ) {
 
